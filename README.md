@@ -99,11 +99,12 @@ The current Python library requirements for this project are:
 How to Run the ucac4.py File
 ===============================
 
-Edit the catalogs.conf file under [UCAC4] to include the server host, port, user and password you wish to have the database created on. I
+1. Edit the catalogs.conf file under [UCAC4] to include the server host, port, user and password you wish to have the database created on. I
 
-Navigate to the command line and run the ucac4.py file by the 'python ucac4.py' command
+2. Navigate to the command line and run the ucac4.py file by the 'python ucac4.py' command
 
-Ensure that the ucac4 catalog is in the same folder as the ucac4.py file and that the ucac4 zone files are in the u4b folder of the ucac4 catalog
+3. Ensure that the ucac4 catalog is in the same folder as the ucac4.py file or that an appropriate file path is specified to reach the u4b folder and that the ucac4 zone files are in the u4b folder
+
 
 Overview of possible execution commands:
 
