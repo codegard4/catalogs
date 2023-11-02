@@ -111,7 +111,8 @@ Overview of possible execution commands:
 |:-----:|:----------|:------|
 |python ucac4.py|creates UCAC4_dev database by pulling from the zone files in the u4b folder of the catalog and adds all rows of the catalog to ucac4, ucac4_errors_flags, ucac4_not_visible, and ucac4_errors_flags_not_visible tables||
 |python ucac4.py -d|specifies the name of the database to insert the four tables into|"UCAC4_dev"|
-|python ucac4.py -f|specifies the number of zone files that should be inserted. For full insertion leave blank|900|
+|python ucac4.py -n|specifies the number of zone files that should be inserted. For full insertion leave blank|900|
+|python ucac4.py -f|specifies the path to the ucac4 zone files path should be "../location/u4b"|u4b|
 |python ucac4.py -t|specifies the names of the tables that should be created. Should only be changed to remove _not_visible files|ucac4, ucac4_errors_flags,ucac4_not_visible, ucac4_errors_flags_not_visible|
 |python ucac4.py -r|specifies whether the files should be randomly or uniformly chosen for insertion. If r==True then files will be randomly chosen up to the specified number of files|False|
 
