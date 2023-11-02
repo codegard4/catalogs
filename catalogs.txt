@@ -1,17 +1,17 @@
 [DEFAULT]
-host = vm-magiq-api-build2.keck.hawaii.edu
-port = 3306
-user = catalogs
-password = C@t@logs4u
+host = 
+port = 
+user = 
+password = 
 
 [SAO2000]
-host = vm-magiq-api-build2.keck.hawaii.edu
-port = 3306
-user = catalogs
-password = C@t@logs4u
+host = 
+port = 
+user = 
+password = 
 
 [UCAC4]
-host = vm-magiq-api-build2.keck.hawaii.edu
-port = 3306
-user = catalogs
-password = C@t@logs4u
+host = 
+port = 
+user = 
+password = 
