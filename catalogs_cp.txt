@@ -1,0 +1,17 @@
+[DEFAULT]
+host = 
+port = 
+user = 
+password = 
+
+[SAO2000]
+host = 
+port = 
+user = 
+password = 
+
+[UCAC4]
+host = 
+port = 
+user = 
+password = 
