@@ -271,7 +271,7 @@ def killConnections(databaseName = "UCAC4_dev"):
     try: 
         conn = connectToDatabase(db_name = databaseName)
         cur = conn.cursor()
-        cur.execute(f"SELECT CONCAT('KILL', id, ';') FROM INFORMATION_SCHEMA.PROCESSLIST WHERE 'user' = 'vm-internship.keck.hawaii.edu';")
+        cur.execute(f"SELECT CONCAT('KILL', ID, ';') FROM INFORMATION_SCHEMA.PROCESSLIST WHERE 'host' LIKE '%vm-internship.keck.hawaii.edu%';")
         conn.commit()
         conn.close()
         print("successful")
@@ -288,6 +288,8 @@ def parseArguments(in_args):
     parser.add_argument("-f", "--filePath", dest="fPath", type=str, help="location of the u4b folder", default="u4b")
     parser.add_argument("-t", "--tableNames", dest="tNames", type=list, help="names of the tables (default = [ucac4,ucac4_errors_flags,ucac4_errors_flags_not_visible,ucac4_not_visible])", default=['ucac4', 'ucac4_errors_flags', 'ucac4_not_visible', 'ucac4_errors_flags_not_visible'])
     parser.add_argument("-r", "--randomInsertion", dest="rIns", type=bool, help="Randomly select files to insert? (default = F)", default=False)
+    parser.add_argument("-m", "--manuallyInsert", dest="mIns", type=str, help="Manually insert zone files in a specified range (default = 0,0)", default=None)
+    parser.add_argument("-k", "--dropTables", dest="kill", type=bool, help="Drop Current tables and restart DB ingestion? (Default = False)", default=False)
     args = None
     try:
         args = parser.parse_args(in_args[1:])
@@ -298,20 +300,32 @@ def parseArguments(in_args):
     return args 
 
 def ingestDB():
-    args = parseArguments(sys.argv)
+    args = parseArguments(sys.argv) 
+    numFiles = args.fNum
     killConnections()
     createDatabase(args.dName)
-    for i in range(len(args.tNames)):
-        dropTable(databaseName = args.dName, tableName = args.tNames[i])
-        createTable(databaseName = args.dName, tableName = args.tNames[i])
-        print(args.tNames[i])
-    if(args.rIns):
-        nums = random.sample(range(1, 900), args.fNum)
+    if(args.kill):
+        for i in range(len(args.tNames)):
+            print("Dropping Tables")
+            dropTable(databaseName = args.dName, tableName = args.tNames[i])
+            createTable(databaseName = args.dName, tableName = args.tNames[i])
+            # print(args.tNames[i])
+    if(args.mIns != None):
+        # print(args.mIns)
+        files = args.mIns.split(",")
+        # print(files)
+        nums = np.arange(int(files[0]),int(files[1])+1,1)
+        numFiles = len(nums)
+        print(f"Manually Inserting files {files[0]} through {files[1]}")
+    elif(args.rIns):
+        nums = random.sample(range(1, 901), args.fNum)
     else:
-        nums = np.arange(1,900,int(900/args.fNum))
-    for i in tqdm(range(1,args.fNum+1)):
+        nums = np.arange(1,901,int(900/args.fNum))
+        
+    for i in tqdm(range(1,numFiles+1)):
         insertTable(databaseName = args.dName, fileNum = nums[i-1], tableNames = args.tNames, path = args.fPath)
     print(f"Zone Files Inserted: {nums}")
+
     
     
 if __name__ == "__main__":
