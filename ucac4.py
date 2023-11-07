@@ -30,20 +30,20 @@ def connectToDatabase(db_name = None):
         conn = pymysql.connect(host=db_host, port=db_port, user=db_user, password=db_password, database = db_name)
     return conn
 
-def getOffsets(zoneNr):
-    #Retrieves file offsets from the UCAC offsets file
-    fileName = "%s/u4i/z%03d.idx" % ("../ucac4/", zoneNr)
-    with open(fileName, "rb") as fh:
-        out = [0] * 360
-        for line in fh:
-            if not line:
-                break
-            parts = line.strip().split()
-            i = int(parts[0])
-            if i >= 360:
-                continue
-            out[i] = int(parts[1])
-        return out
+# def getOffsets(zoneNr):
+#     #Retrieves file offsets from the UCAC offsets file
+#     fileName = "%s/u4i/z%03d.idx" % ("../ucac4/", zoneNr)
+#     with open(fileName, "rb") as fh:
+#         out = [0] * 360
+#         for line in fh:
+#             if not line:
+#                 break
+#             parts = line.strip().split()
+#             i = int(parts[0])
+#             if i >= 360:
+#                 continue
+#             out[i] = int(parts[1])
+#         return out
         
 def checkMag(mag):
     #Changes blank magnitude values to NULL
@@ -136,8 +136,8 @@ def insertTable(databaseName = "UCAC4_dev", fileNum = 1, tableNames = ['ucac4', 
                     VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);  
                 """
         with open(f'{path}/z{fileName}', 'rb') as f:
-            offsets = getOffsets(fileNum)  
-            f.seek(offsets[int(fileNum*0.2)] * 78, 0)
+            # offsets = getOffsets(fileNum)  
+            # f.seek(offsets[int(fileNum*0.2)] * 78, 0)
             ok = True
             incr = ""
             while ok:
@@ -285,7 +285,7 @@ def parseArguments(in_args):
     parser = argparse.ArgumentParser(description=description, usage=usage, epilog=epilog)
     parser.add_argument("-d", "--databaseName", dest="dName", type=str, help="Name of the database to insert the tables into (default = 'UCAC4_dev')", default="UCAC4_dev")
     parser.add_argument("-n", "--NumFiles", dest="fNum", type=int, help="Number of files to insert into the database (default = 900)", default=900)
-    parser.add_argument("-f", "--filePath", dest="fPath", type=str, help="location of the u4b folder", default="u4b")
+    parser.add_argument("-f", "--filePath", dest="fPath", type=str, help="location of the u4b folder", default="../ucac4/u4b")
     parser.add_argument("-t", "--tableNames", dest="tNames", type=list, help="names of the tables (default = [ucac4,ucac4_errors_flags,ucac4_errors_flags_not_visible,ucac4_not_visible])", default=['ucac4', 'ucac4_errors_flags', 'ucac4_not_visible', 'ucac4_errors_flags_not_visible'])
     parser.add_argument("-r", "--randomInsertion", dest="rIns", type=bool, help="Randomly select files to insert? (default = F)", default=False)
     parser.add_argument("-m", "--manuallyInsert", dest="mIns", type=str, help="Manually insert zone files in a specified range (default = 0,0)", default=None)
