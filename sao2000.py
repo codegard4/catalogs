@@ -277,7 +277,11 @@ def killConnections():
         _,_,user,_ = connectionParameters()
         conn = connectToDatabase(db_name = databaseName)
         cur = conn.cursor()
-        cur.execute(f"SELECT CONCAT('KILL', id, ';') FROM INFORMATION_SCHEMA.PROCESSLIST WHERE 'user' = '{user}';")
+        cur.execute(f"SELECT CONCAT('KILL ', id, ';') FROM INFORMATION_SCHEMA.PROCESSLIST WHERE user = '{user}';")
+        kills = cur.fetchall()
+        for kill in kills:
+            # print(kill[0])
+            cur.execute(str(kill[0]))
         conn.commit()
         conn.close()
     except:
