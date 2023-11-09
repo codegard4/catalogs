@@ -4,14 +4,54 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catalog Sky Heatmaps</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            font-family: 'Verdana', sans-serif;
+            color: #2c3e50;
+        }
+
+        img {
+            width: 100%; /* Make images fill the width of the container */
+            height: auto; /* Maintain aspect ratio */
+            margin-bottom: 20px;
+        }
+
+        .catalog-link {
+            margin-top: 10px;
+            font-size: 14px;
+        }
+    </style>
 </head>
 <body>
+
     <h1>Catalog Sky Heatmaps</h1>
 
-    <h2>SAO 2000 Sky Map</h2>
-    <iframe src="sao2000.html" width="800" height="600"></iframe>
+    <!-- First Image Section -->
+    <h2>SAO2000 Catalog</h2>
+    <img src="sao2000.html" alt="SAO 2000 Image">
 
-    <h2>UCAC4 Sky Map</h2>
-    <iframe src="ucac4.html" width="800" height="600"></iframe>
+    <div class="catalog-link">
+        Click <a href="https://heasarc.gsfc.nasa.gov/W3Browse/star-catalog/sao.html" target="_blank">here</a> for more information about the SAO2000 Catalog.
+        <p>
+            This database is based on the electronic version of the SAO catalog from the Astronomical Data Center, which is itself based on an original binary version of the Smithsonian Astrophysical Observatory Star Catalog (SAO, SAO Staff 1966). Subsequent improvements by T. A. Nagy (1979) included the addition of cross-identifications from the Table of Correspondences SAO/HD/DM/GC (Morin 1973). As a prelude to the creation of the 1984 version of the SAO, a new version of the SAO-HD-GC-DM Cross Index was prepared (Roman, Warren, and Schofield 1983). The 1984 version of the SAO contained the corrected and extended cross identifications, all errata published up to January 1984 and known to the ADC, numerous errors forwarded to the ADC by colleagues, and errors discovered at the ADC during the course of this work. Clayton A. Smith of the U. S. Naval Observatory provided J2000.0 positions and proper motions for the SAO stars. Published and unpublished errors discovered in the previous version (1984) have been corrected (up to May 1991).
+        </p>
+    </div>
+
+    <!-- Second Image Section -->
+    <h2>UCAC4 Catalog</h2>
+    <img src="ucac4.html" alt="UCAC4 Image">
+
+    <div class="catalog-link">
+        Click <a href="https://irsa.ipac.caltech.edu/data/UCAC4/ucac4.html" target="_blank">here</a> for more information about the UCAC4 Catalog.
+        <p>
+            UCAC4 is a compiled, all-sky star catalog covering mainly the 8 to 16 magnitude range in a single bandpass between V and R. Positional errors are about 15 to 20 mas for stars in the 10 to 14 mag range. Proper motions have been derived for most of the about 113 million stars utilizing about 140 other star catalogs with a significant epoch difference to the UCAC CCD observations. These data are supplemented by 2MASS photometric data for about 110 million stars and 5-band (B,V,g,r,i) photometry from the APASS (AAVSO Photometric All-Sky Survey) for over 50 million stars. UCAC4 also contains error estimates and various flags. All bright stars not observed with the astrograph have been added to UCAC4 from a set of Hipparcos and Tycho-2 stars. Thus UCAC4 should be complete from the brightest stars to about R=16, with the source of data indicated in flags. UCAC4 also provides a link to the original Hipparcos star number with additional data such as parallax found on a separate data file included in this release.
+        </p>
+    </div>
+
 </body>
 </html>
