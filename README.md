@@ -65,8 +65,43 @@ sao2000 Table Columns
 |VMag_delta    | INT         | Accuracy of V: 0 = 2 decimals, 1=1 decimal|
 |PhotMag_delta | INT         | Accuracy of Ptg: 0 = 2 decimals, 1=1 decimal|
 
+sao2000_errors_flags Table Columns
+===============================
 
-
+| Column               | Type          | Description                                      |
+|----------------------|---------------|--------------------------------------------------|
+| SaoNumber            | INT           | Sao Number                                       |
+| Dup                  | VARCHAR(1)    | Duplicate Flag                                   |
+| RA1950               | VARCHAR(10)   | Right Ascension at 1950                          |
+| PMRA_1950            | FLOAT         | Proper Motion in Right Ascension at 1950         |
+| PMRA_1950mu          | FLOAT         | Proper Motion in Right Ascension at 1950 (mu)    |
+| RA2m_flag            | VARCHAR(1)    | Right Ascension 2nd moment Flag                  |
+| RA1950_precessed     | FLOAT         | Precessed Right Ascension at 1950                |
+| RA1950_precessed_sd  | FLOAT         | Standard Deviation of Precessed RA at 1950       |
+| Original_Epoch       | FLOAT         | Original Epoch                                   |
+| Dec1950              | VARCHAR(11)   | Declination at 1950                              |
+| PMDec_1950           | FLOAT         | Proper Motion in Declination at 1950             |
+| PMDec_1950mu         | FLOAT         | Proper Motion in Declination at 1950 (mu)        |
+| D2m_Flag             | VARCHAR(1)    | Declination 2nd moment Flag                      |
+| DE2s                 | FLOAT         | Declination at 1950 (2nd moment)                 |
+| e_DE2                | FLOAT         | Error in Declination at 1950 (2nd moment)        |
+| Dec_orig_epoch       | FLOAT         | Declination at Original Epoch                    |
+| e_Pos                | FLOAT         | Error in Position                                |
+| VMag_src             | INT           | Visual Magnitude (Source)                        |
+| StarNum_src          | INT           | Star Number (Source)                             |
+| PhotMag_src          | INT           | Photographic Magnitude (Source)                  |
+| PM_src               | INT           | Proper Motion (Source)                           |
+| SpecType_src         | INT           | Spectral Type (Source)                           |
+| Rem                  | INT           | Remark                                           |
+| SrcCatCode           | INT           | Source Catalog Code                              |
+| SrcCatNum            | INT           | Source Catalog Number                            |
+| Dec1950_rad          | FLOAT         | Declination at 1950 (in radians)                 |
+| DurchmusterungID     | VARCHAR(14)   | Durchmusterung ID                                |
+| HenryDraperCatNum    | VARCHAR(6)    | Henry Draper Catalog Number                      |
+| HDDuplicateID        | VARCHAR(1)    | Henry Draper Duplicate ID                        |
+| GeneralCatalogNumber1950 | VARCHAR(5) | General Catalog Number at 1950                  |
+| RA1950_rad           | FLOAT         | Right Ascension at 1950 (in radians)             |
+| Dec1950_rad          | FLOAT         | Declination at 1950 (in radians)                 |
 
 
 # ucac4
@@ -151,9 +186,36 @@ Overview of ucac4 table columns
 |APASS_r       | FLOAT       | r Magnitude APASS Catalog|
 |APASS_i       | FLOAT       | i Magnitude APASS Catalog|
 
+Overview of ucac4_errors_flags table columns
+===============================
+
+| Column         | SQL Type | Description                                       |
+|----------------|----------|---------------------------------------------------|
+| UCAC_ID        | INT      | Primary Key                                       |
+| SigMag         | FLOAT    | Significant Magnitude                            |
+| Na1            | INT      | Na1                                               |
+| Nu1            | INT      | Nu1                                               |
+| Cu1            | INT      | Cu1                                               |
+| icqflg_J       | INT      | ICQ Flag for J Band                              |
+| icqflg_H       | INT      | ICQ Flag for H Band                              |
+| icqflg_K       | INT      | ICQ Flag for K Band                              |
+| e2mpho_J       | INT      | Error in 2MASS Photometry for J Band             |
+| e2mpho_H       | INT      | Error in 2MASS Photometry for H Band             |
+| e2mpho_K       | INT      | Error in 2MASS Photometry for K Band             |
+| APASS_B_err    | INT      | Error in APASS B Band Magnitude                  |
+| APASS_V_err    | INT      | Error in APASS V Band Magnitude                  |
+| APASS_g_err    | INT      | Error in APASS g Band Magnitude                  |
+| APASS_r_err    | INT      | Error in APASS r Band Magnitude                  |
+| APASS_i_err    | INT      | Error in APASS i Band Magnitude                  |
+| gcflg          | INT      | Yale San Juan first epoch Southern Proper Motion|
+| icf            | VARCHAR(20) | ICF                                            |
+| leda           | INT      | LEDA                                              |
+| x2m            | INT      | X2M                                               |
+| zn2            | INT      | Zone Astrog. catalog match flag                   |
+| rn2            | INT      | NPM Lick catalog match flag                      |
 
 
-# gsc240
+
 How to Run the gsc240.py File
 ===============================
 
