@@ -68,7 +68,7 @@ sao2000 Table Columns
 sao2000_errors_flags Table Columns
 ===============================
 
-| Column               | Type          | Description                                      |
+|Column Name|SQL Type|Description|
 |----------------------|---------------|--------------------------------------------------|
 | SaoNumber            | INT           | Sao Number                                       |
 | Dup                  | VARCHAR(1)    | Duplicate Flag                                   |
@@ -189,7 +189,7 @@ Overview of ucac4 table columns
 Overview of ucac4_errors_flags table columns
 ===============================
 
-| Column         | SQL Type | Description                                       |
+|Column Name|SQL Type|Description|
 |----------------|----------|---------------------------------------------------|
 | UCAC_ID        | INT      | Primary Key                                       |
 | SigMag         | FLOAT    | Significant Magnitude                            |
