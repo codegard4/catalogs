@@ -215,7 +215,7 @@ Overview of ucac4_errors_flags table columns
 | rn2            | INT      | NPM Lick catalog match flag                      |
 
 
-
+# gsc240
 How to Run the gsc240.py File
 ===============================
 
