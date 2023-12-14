@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UNIVERSAL CATALOG FEATURES</title>
+</head>
+
+<body>
+
+  <h1>UNIVERSAL CATALOG FEATURES</h1>
+
+  <h2>Universal Import Requirements</h2>
+  <hr>
+  <p>It is recommended that this project be run with Anaconda Python 3.5 or above.</p>
+
+  <p>The current Python library requirements for this project are:</p>
+  <ul>
+    <li>pymysql</li>
+    <li>tqdm</li>
+    <li>argparse</li>
+    <li>os</li>
+    <li>sys</li>
+    <li>math</li>
+    <li>numpy</li>
+    <li>pandas</li>
+    <li>configparser</li>
+  </ul>
+
+  <h2>Universal Commands</h2>
+  <hr>
+  <table>
+    <thead>
+      <tr>
+        <th>Command</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>python filename.py -d</td>
+        <td>changes the name of the database that is created; should be each catalog in caps with numbers removed (Ex: sao2000-->SAO)</td>
+      </tr>
+      <tr>
+        <td>python filename.py -f</td>
+        <td>specifies an alternate location for the catalog's data file (/mnt/dss/catalogs/*catalogName*) OR (/net/storageserver/dss/catalogs/*catalogName*/) will work depending on the server used</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>SAO2000</h2>
+  <hr>
+  <h3>How to Run the sao2000.py File</h3>
+
+  <ol>
+    <li>Edit the catalogs.conf file under [SAO2000] to include the server host, port, user and password you wish to have the database created on.</li>
+    <li>Navigate to the command line and run the sao2000.py file by the 'python sao2000.py' command</li>
+    <li>The sao.dat file must be either in the same location as the sao2000.py file or a path to the sao.dat file must be specified</li>
+  </ol>
+
+  <p>*The default file will create an SAO2000_dev database with all rows of the SAO2000 catalog inserted into the sao1950
+    and sao2000 files</p>
+
+  <h3>Additional SAO Commands</h3>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Command</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>python sao2000.py -r</td>
+        <td>specifies the number of rows to be inserted from the sao2000 catalog</td>
+        <td>All Rows</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>* to run sao ingestion use python sao2000.py -d SAO -f *your local path to the sao.dat file*</p>
+
+  <h2>UCAC4</h2>
+  <hr>
+
+  <h3>Additional Package Requirements</h3>
+
+  <ul>
+    <li>struct</li>
+    <li>random</li>
+  </ul>
+
+  <h3>How to Run the ucac4.py File</h3>
+
+  <ol>
+    <li>Edit the catalogs.conf file under [UCAC4] to include the server host, port, user and password you wish to have the database created on.</li>
+    <li>Navigate to the command line and run the ucac4.py file by the 'python ucac4.py' command</li>
+    <li>Ensure that the ucac4 catalog is in the same folder as the ucac4.py file or that an appropriate file path is specified to reach the u4b folder and that the ucac4 zone files are in the u4b folder</li>
+  </ol>
+
+  <h3>Additional UCAC Commands</h3>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Command</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>python ucac4.py -n</td>
+        <td>specifies the number of zone files that should be inserted. For full insertion leave blank</td>
+        <td>900</td>
+      </tr>
+      <tr>
+        <td>python ucac4.py -r</td>
+        <td>specifies whether the files should be randomly or uniformly chosen for insertion. If r==True then files will be randomly chosen up to the specified number of files</td>
+        <td>False</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>* to run ucac ingestion use python ucac4.py -d UCAC -f *your local path to the 900 UCAC zone files*</p>
+
+  <!-- Additional sections for GSC240, GAIA, 2MASS, and HIP go here -->
+
+</body>
+
+</html>
