@@ -21,9 +21,8 @@ Universal Commands
 ==================
 |Command|Description|
 |:-----:|:----------|
-
 |python filename.py -d |changes the name of the database that is created; should be each catalog in caps with numbers removed (Ex: sao2000-->SAO)|
-|python filename.py -f |specifies an alternate location for the catalog's data file (/mnt/dss/catalogs/*catalogName*) OR (/net/storageserver/dss/catalogs/*catalogName*/) will work depending on the server used |
+|python filename.py -f |specifies an alternate location for the catalog's data file|
 
 # SAO2000
 
@@ -98,10 +97,10 @@ Additional GSC Commands
 | python gsc240.py -mr     | Manually Insert a range of files                                                 | None                        |
 | python gsc240.py -v      | Print the number of duplicate & new stars to the command line                    | False                       |
 
-* *
+
 * to run gsc240 ingestion use python gsc240.py -d GSC -f *your local path to the 180 gsc folders* -k True -v True
-* * -k True will clear the database, do NOT use this in the main GSC catalog. Only use it for clearing test databases in dev or when you first run the gsc ingestion in a database
-* * -v True will print any errors that the file throws when running db ingestion. It will not print duplicate star errors, which are the most common. The SQL DB will throw this error if you try to insert a file that has already been inserted
+	* -k True will clear the database, do NOT use this in the main GSC catalog. Only use it for clearing test databases in dev or when you first run the gsc ingestion in a database
+	* -v True will print any errors that the file throws when running db ingestion. It will not print duplicate star errors, which are the most common. The SQL DB will throw this error if you try to insert a file that has already been inserted
 
 
 
@@ -132,10 +131,10 @@ Additional GAIA Commands
 | python gaia.py -k         | Drop current tables and restart DB ingestion?                                        | False                          |
 | python gaia.py -v         | Print errors & star numbers                                                          | False                          |
 
-* *
+
 * to run gaia ingestion use python gaia.py -d GAIA -f *your local path to the gaia folders* -k True -v True
-* * -k True will clear the database, do NOT use this after the first run of gaia; only use it for clearing test databases in dev or when you first run the gaia ingestion in a database
-* * -v True will print any errors that the file throws when running db ingestion. It will not print duplicate star errors, which are the most common. The SQL DB will throw this error if you try to insert a file that has already been inserted
+	* -k True will clear the database, do NOT use this after the first run of gaia; only use it for clearing test databases in dev or when you first run the gaia ingestion in a database
+	* -v True will print any errors that the file throws when running db ingestion. It will not print duplicate star errors, which are the most common. The SQL DB will throw this error if you try to insert a file that has already been inserted
 
 
 
@@ -165,10 +164,10 @@ Additional GAIA Commands
 | python 2mass.py -mr       | Manually insert a set of files (1,180--insert Dec files 0-179)                       | ""                             |
 | python 2mass.py -v        | Print the number of duplicate/new stars to the command line                          | False                          |
 
-* *
+
 * to run 2mass ingestion use python 2mass.py -d 2MASS -f *your local path to the 2mass data folder* -k True -v True
-* * -k True will clear the database, do NOT use this after the first run of 2mass; only use it for clearing test databases in dev or when you first run the ingestion in a database
-* * -v True will print any errors that the file throws when running db ingestion. It will not print duplicate star errors, which are the most common. The SQL DB will throw this error if you try to insert a file that has already been inserted
+	* -k True will clear the database, do NOT use this after the first run of 2mass; only use it for clearing test databases in dev or when you first run the ingestion in a database
+	* -v True will print any errors that the file throws when running db ingestion. It will not print duplicate star errors, which are the most common. The SQL DB will throw this error if you try to insert a file that has already been inserted
 
 
 
@@ -193,7 +192,7 @@ Additional HIP Commands
 | python hip.py -k       | Drop current tables and restart DB ingestion?                    | False                    |
 | python hip.py -v       | Print number of duplicate/new stars to the command line          | False                    |
 
-* *
+
 * to run hip ingestion use python hip.py -d HIP -f *your local path to the 2mass data folder* -k True -v True
-* * -k True will clear the database, do NOT use this after the first run of hip; only use it for clearing test databases in dev or when you first run the ingestion in a database
-* * -v True will print any errors that the file throws when running db ingestion. It will not print duplicate star errors, which are the most common. The SQL DB will throw this error if you try to insert a file that has already been inserted
+	* -k True will clear the database, do NOT use this after the first run of hip; only use it for clearing test databases in dev or when you first run the ingestion in a database
+	* -v True will print any errors that the file throws when running db ingestion. It will not print duplicate star errors, which are the most common. The SQL DB will throw this error if you try to insert a file that has already been inserted
