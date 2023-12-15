@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -53,11 +52,9 @@
 </head>
 
 <body>
-
+     <h1>Catalog Sky Heatmaps</h1>
     
-    <h1>Catalog Sky Heatmaps</h1>
-    
-    
+    <!-- GSC -->
     <h2>GSC 240 Sky Map</h2>
     <iframe src="gsc240.html" width="800" height="600"></iframe>
 
@@ -65,15 +62,19 @@
         <a href="https://heasarc.gsfc.nasa.gov/W3Browse/all/gsc.html" target="_blank">Click here for more information about the GSC240 Catalog.</a>
         <br>
         <a href="gsc_description.pdf" target="_blank">Click here for the GSC240 MySQL database description & schema</a>
-        <ul>
-          <li>The Guide Star Catalog (GSC) supports the operational needs of the Hubble Space Telescope and contains nearly 19 million objects brighter than sixteenth magnitude, with over 15 million classified as stars.</li>
-          <li>The GSC provides positions and magnitudes for the stars, and various versions of the catalog are available on the STScI Website.</li>
-          <li>Guide Star Catalog Version 1.2 includes astrometric recalibration and refinements compared to Version 1.1, with an estimated overall rms error better than 0.3 arcseconds.</li>
-          <li>The GSC 1.2 reduction references the "Positions and Proper Motions Catalogue" (PPM) and the Astrographic Catalogue (AC) for removing mean systematics from plates.</li>
-          <li>The HEASARC has not combined objects with multiple listings in the GSC 1.2 Catalog, and the recommended browse cone search radius is 30 arcminutes, with a default radius of 1 arcminute. GSC 1.2 is not recommended for HST phase 2 coordinates, as it has not been installed in the HST ground system.</li>
-        </ul>
     </div>
-    
+
+    <!-- 2MASS Sky Map Section -->
+    <h2>2MASS Sky Map</h2>
+    <iframe src="2mass.html" width="800" height="600"></iframe>
+
+    <div class="catalog-link">
+        <a href="http://tdc-www.harvard.edu/catalogs/tmc.format.html" target="_blank">Click here for more information about the 2MASS Catalog.</a>
+        <br>
+        <a href="#" target="_blank">Click here for the 2MASS MySQL database description & schema</a>
+    </div>
+
+    <!-- UCAC4 Sky Map Section -->
     <h2>UCAC4 Sky Map</h2>
     <iframe src="ucac4.html" width="900" height="700"></iframe>
 
@@ -81,15 +82,19 @@
         <a href="https://irsa.ipac.caltech.edu/data/UCAC4/ucac4.html" target="_blank">Click here for more information about the UCAC4 Catalog.</a>
         <br>
         <a href="ucac_description.pdf" target="_blank">Click here for the UCAC4 MySQL database description & schema</a>
-        <ul>
-            <li>UCAC4 is a compiled, all-sky star catalog covering mainly the 8 to 16 magnitude range in a single bandpass between V and R.</li>
-            <li>Positional errors are about 15 to 20 mas for stars in the 10 to 14 mag range.</li>
-            <li>Proper motions have been derived for most of the about 113 million stars utilizing about 140 other star catalogs with a significant epoch difference to the UCAC CCD observations.</li>
-            <li>These data are supplemented by 2MASS photometric data for about 110 million stars and 5-band (B,V,g,r,i) photometry from the APASS (AAVSO Photometric All-Sky Survey) for over 50 million stars.</li>
-            <li>UCAC4 also contains error estimates and various flags. All bright stars not observed with the astrograph have been added to UCAC4 from a set of Hipparcos and Tycho-2 stars. Thus UCAC4 should be complete from the brightest stars to about R=16, with the source of data indicated in flags. UCAC4 also provides a link to the original Hipparcos star number with additional data such as parallax found on a separate data file included in this release.</li>
-        </ul>
+    </div>
+    
+    <!-- HIP Sky Map Section -->
+    <h2>HIP Sky Map</h2>
+    <iframe src="hip.html" width="800" height="600"></iframe>
+
+    <div class="catalog-link">
+        <a href="https://heasarc.gsfc.nasa.gov/W3Browse/all/hipparcos.html" target="_blank">Click here for more information about the HIP Catalog.</a>
+        <br>
+        <a href="#" target="_blank">Click here for the HIP MySQL database description & schema</a>
     </div>
 
+    <!-- SAO 2000 Sky Map Section -->
     <h2>SAO 2000 Sky Map</h2>
     <iframe src="sao2000.html" width="800" height="600"></iframe>
 
@@ -97,13 +102,6 @@
         <a href="https://heasarc.gsfc.nasa.gov/W3Browse/star-catalog/sao.html" target="_blank">Click here for more information about the SAO2000 Catalog.</a>
         <br>
         <a href="sao_description.pdf" target="_blank">Click here for the SAO2000 MySQL database description & schema</a>
-        <ul>
-            <li>This database is based on the electronic version of the SAO catalog from the Astronomical Data Center, which is itself based on an original binary version of the Smithsonian Astrophysical Observatory Star Catalog (SAO, SAO Staff 1966).</li>
-            <li>Subsequent improvements by T. A. Nagy (1979) included the addition of cross-identifications from the Table of Correspondences SAO/HD/DM/GC (Morin 1973).</li>
-            <li>As a prelude to the creation of the 1984 version of the SAO, a new version of the SAO-HD-GC-DM Cross Index was prepared (Roman, Warren, and Schofield 1983).</li>
-            <li>The 1984 version of the SAO contained the corrected and extended cross identifications, all errata published up to January 1984 and known to the ADC, numerous errors forwarded to the ADC by colleagues, and errors discovered at the ADC during the course of this work.</li>
-            <li>Clayton A. Smith of the U. S. Naval Observatory provided J2000.0 positions and proper motions for the SAO stars. Published and unpublished errors discovered in the previous version (1984) have been corrected (up to May 1991).</li>
-        </ul>
     </div>
 
 </body>
