@@ -17,10 +17,10 @@ def connectionParameters():
     """
     config = configparser.ConfigParser()
     config.read('catalogs.conf')
-    db_host = config['GSC240']['host']
-    db_port = int(config['GSC240']['port'])
-    db_user = config['GSC240']['user']
-    db_password = config['GSC240']['password']
+    db_host = config['2MASS']['host']
+    db_port = int(config['2MASS']['port'])
+    db_user = config['2MASS']['user']
+    db_password = config['2MASS']['password']
     return db_host, db_port, db_user, db_password
 
 def connectToDatabase(db_name = None):
@@ -38,35 +38,12 @@ def connectToDatabase(db_name = None):
         conn = pymysql.connect(host = db_host, port = db_port, user = db_user, password = db_password, database = db_name)
     return conn
     
-def cnm(mag):
-    """
-    Checks null mag values and changes 99.9 values to NULL.
-    Args:
-        mag (float): Magnitude value.
-    Returns:
-        float or None: Returns mag if not 99.9, otherwise returns None.
-    """
-    if mag == 99.9:
-        return None
-    return mag
-
-def cnc(code):
-    """
-    Checks null code values and changes 99 values to NULL.
-    Args:
-        code (int): Code value.
-    Returns:
-        int or None: Returns code if not 99, otherwise returns None.
-    """
-    if code == 99:
-        return None
-    return code
     
-def createDatabase(databaseName = "GSC240_dev"): 
+def createDatabase(databaseName = "2MASS_dev"): 
     """
-    Creates the GSC240 database if it doesn't already exist.
+    Creates the specified database if it doesn't already exist.
     Args:
-        databaseName (str): Name of the database. Default is "GSC240_dev".
+        databaseName (str): Name of the database.
     """
     try:
         conn = connectToDatabase()
@@ -77,9 +54,9 @@ def createDatabase(databaseName = "GSC240_dev"):
         print(f"DB {databaseName} created")
     except:
         pass
-        # print("DB already created")
+        
     
-def createTable(databaseName = "GSC240_dev", tableName = "gsc240"): 
+def createTable(databaseName = "2MASS_dev", tableName = "2mass"): 
     """
     Creates the specified table.
     Args:
@@ -88,77 +65,26 @@ def createTable(databaseName = "GSC240_dev", tableName = "gsc240"):
     """
     conn = connectToDatabase(db_name = databaseName)
     cur = conn.cursor()
-    cur.execute(f'CREATE TABLE {tableName} (HSTID VARCHAR(11) PRIMARY KEY);')
-    if tableName == 'gsc240' or tableName == 'gsc240_not_visible':
+    cur.execute(f'CREATE TABLE {tableName} (2mass_ID VARCHAR(20) PRIMARY KEY);')
+    if tableName == '2mass' or tableName == '2mass_not_visible':
         query = f"""ALTER TABLE {tableName} \
-            ADD GSC1ID VARCHAR(11), \
-            ADD GSCID INT, \
             ADD RA VARCHAR(13), \
             ADD Decl VARCHAR(13), \
-            ADD RA_rad DOUBLE, \
-            ADD Decl_rad DOUBLE, \
-            ADD RA_deg DOUBLE, \
-            ADD Decl_deg DOUBLE, \
-            ADD Original_Epoch REAL, \
-            ADD RA_eps REAL, \
-            ADD Decl_eps REAL, \
-            ADD PmRA REAL, \
-            ADD PmDec REAL, \
-            ADD Delta_Epoch REAL, \
-            ADD FpgMag REAL, \
-            ADD JpgMag REAL, \
-            ADD VMag REAL, \
-            ADD NpgMag REAL, \
-            ADD UMag REAL, \
-            ADD BMag REAL, \
-            ADD RMag REAL, \
-            ADD IMag REAL, \
+            ADD RA_rad DOUBLE(5,7), \
+            ADD Decl_rad DOUBLE(5,7), \
+            ADD RA_deg DOUBLE(5,7), \
+            ADD Decl_deg DOUBLE(5,7), \
             ADD JMag REAL, \
             ADD HMag REAL, \
             ADD KMag REAL, \
-            ADD Classification INT, \
-            ADD SemiMajorAxis REAL, \
-            ADD Eccentricity REAL, \
-            ADD PositionAngle REAL, \
-            ADD SourceStatus INT; \
-            """
-        cur.execute(query)
-    elif tableName == 'gsc240_errors_flags' or tableName == 'gsc240_errors_flags_not_visible':
-        query = f"""ALTER TABLE {tableName} \
-            ADD GSC1ID VARCHAR(11), \
-            ADD GSCID INT, \
-            ADD PmRA_mu REAL, \
-            ADD PmDec_mu REAL, \
-            ADD FpgMag_err REAL, \
-            ADD FpgMag_code INT, \
-            ADD JpgMag_err REAL, \
-            ADD JpgMag_code INT, \
-            ADD VMag_err REAL, \
-            ADD VMag_code INT, \
-            ADD NpgMag_err REAL, \
-            ADD NpgMag_code INT, \
-            ADD UMag_err REAL, \
-            ADD UMag_code INT, \
-            ADD BMag_err REAL, \
-            ADD BMag_code INT, \
-            ADD RMag_err REAL, \
-            ADD RMag_code INT, \
-            ADD IMag_err REAL, \
-            ADD IMag_code INT, \
-            ADD JMag_err REAL, \
-            ADD JMag_code INT, \
-            ADD HMag_err REAL, \
-            ADD HMag_code INT, \
-            ADD KMag_err REAL, \
-            ADD KMag_code INT, \
-            ADD VariableFlag INT, \
-            ADD MultipleFlag INT; \
+            ADD ph_qual VARCHAR(3), \
+            ADD rd_flg INT; \
             """
         cur.execute(query)
     conn.commit()
     conn.close()
 
-def viewTable(databaseName = "GSC240_dev", tableName = "gsc240"):
+def viewTable(databaseName = "2MASS_dev", tableName = "2mass"):
     """
     Queries the database for the specified table.
     Args:
@@ -178,8 +104,19 @@ def viewTable(databaseName = "GSC240_dev", tableName = "gsc240"):
     except:
         print("Cannot View: That table doesn't exist")
 
-    
-def insertTable(databaseName = "GSC240_dev", tableNames = ['gsc240', 'gsc240_errors_flags', 'gsc240_not_visible', 'gsc240_errors_flags_not_visible'], path = "csv", dec1="000", dec2="0000", ra="000", verbose = False):  
+def cnm(value):
+    """
+    Check Null Magnitude: Checks for blank magnitude inputs to convert to null
+    Args:
+        value (str): The input value
+    Returns:
+        Float or None: The float value or None if the input is an empty string.
+    """
+    if value == "":
+        return None
+    return float(value)
+        
+def insertTable(databaseName = "2MASS_dev", tableNames = ['2mass', '2mass_not_visible'], path = "", dec1="000", dec2="0000", ra="000", verbose = False):  
     """
     Inserts data from the dec1 dec2 ra file.
     Args:
@@ -189,121 +126,58 @@ def insertTable(databaseName = "GSC240_dev", tableNames = ['gsc240', 'gsc240_err
         dec1 (str): Declination degree.
         dec2 (str): Declination decimal.
         ra (str): Right ascension.
+        verbose (bool): Whether to print flags
     Returns:
         None
     """
     conn = connectToDatabase(db_name = databaseName)
     cur = conn.cursor() 
     try:
-        if int(dec1) < 20:
-            loc = 2
-        else:
-            loc = 0
-        sql = f"""INSERT INTO {tableNames[loc]} ( \
-                HSTID, GSC1ID, GSCID, RA, Decl, RA_rad, Decl_rad, RA_deg, Decl_deg, Original_Epoch, \
-                RA_eps, Decl_eps, PmRA, PmDec, Delta_Epoch, \
-                FpgMag, JpgMag, VMag, NpgMag, UMag, BMag, RMag, IMag, JMag, HMag, \
-                KMag, Classification, SemiMajorAxis, Eccentricity, PositionAngle, SourceStatus) \
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,  \
-                %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s); \
+        sql = f"""INSERT INTO 2mass ( \
+        2mass_ID, RA, Decl, RA_rad, Decl_rad, RA_deg, Decl_deg, JMag, HMag, KMag, ph_qual, rd_flg)\
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s); \
             """
-        sql_ef= f"""INSERT INTO {tableNames[loc+1]} ( \
-                HSTID, GSC1ID, GSCID, PmRA_mu, PmDec_mu, FpgMag_err, \
-                FpgMag_code, JpgMag_err, JpgMag_code, VMag_err, VMag_code, \
-                NpgMag_err, NpgMag_code, UMag_err, UMag_code, BMag_err, \
-                BMag_code, RMag_err, RMag_code, IMag_err, IMag_code, \
-                JMag_err, JMag_code, HMag_err, HMag_code, KMag_err, \
-                KMag_code, VariableFlag, MultipleFlag) \
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, \
-                %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);\
+        sql_nv= f"""INSERT INTO 2mass_not_visible ( \
+                2mass_ID, RA, Decl, RA_rad, Decl_rad, RA_deg, Decl_deg, JMag, HMag, KMag, ph_qual, rd_flg)\
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s); \
             """
-        file = f"{dec1}/{dec2}/{ra}.csv"
+        file = f"{dec1}/{dec2}/{ra}.dat"
         count = 0
         countdup = 0
         with open(f'{path}/{file}', 'r') as f:
             csvFile = csv.reader(f)
             for line in csvFile:
                 try:
-                    GSCID = line[0]
-                    GSC1ID = str(line[1])
-                    if GSC1ID == "___NULL___":
-                        GSC1ID = None
-                    HSTID = line[2]
-                    RA_rad = float(line[3])
-                    Decl_rad = float(line[4])
-                    RA_deg = radToDeg(RA_rad)
-                    Decl_deg = radToDeg(Decl_rad)
-                    RA = deg2SexagHrs(RA_deg)
-                    Decl = deg2Sexag(Decl_deg)
-                    Original_Epoch = line[5]
-                    RA_eps = line[6]
-                    Decl_eps = line[7]
-                    PmRA = cnm(float(line[8]))
-                    PmDec = cnm(float(line[9]))
-                    Delta_Epoch = line[12]
-                    FpgMag = cnm(float(line[13]))
-                    JpgMag = cnm(float(line[16]))
-                    VMag = cnm(float(line[19]))
-                    NpgMag = cnm(float(line[22]))
-                    UMag = cnm(float(line[25]))
-                    BMag = cnm(float(line[28]))
-                    RMag = cnm(float(line[31]))
-                    IMag = cnm(float(line[34]))
-                    JMag = cnm(float(line[37]))
-                    HMag = cnm(float(line[40]))
-                    KMag = cnm(float(line[43]))
-                    Classification = line[46]
-                    SemiMajorAxis = line[47]
-                    Eccentricity = line[48]
-                    PositionAngle = line[49]
-                    SourceStatus = line[50]
-                    PmRA_mu = cnm(float(line[10]))
-                    PmDec_mu = cnm(float(line[11]))
-                    FpgMag_err = cnm(float(line[14]))
-                    FpgMag_code = cnc(int(line[15]))
-                    JpgMag_err = cnm(float(line[17]))
-                    JpgMag_code = cnc(int(line[18]))
-                    VMag_err = cnm(float(line[20]))
-                    VMag_code = cnc(int(line[21]))
-                    NpgMag_err = cnm(float(line[23]))
-                    NpgMag_code = cnc(int(line[24]))
-                    UMag_err = cnm(float(line[26]))
-                    UMag_code = cnc(int(line[27]))
-                    BMag_err = cnm(float(line[29]))
-                    BMag_code = cnc(int(line[30]))
-                    RMag_err = cnm(float(line[32]))
-                    RMag_code = cnc(int(line[33]))
-                    IMag_err = cnm(float(line[35]))
-                    IMag_code = cnc(int(line[36]))
-                    JMag_err = cnm(float(line[38]))
-                    JMag_code = cnc(int(line[39]))
-                    HMag_err = cnm(float(line[41]))
-                    HMag_code = cnc(int(line[42]))
-                    KMag_err = cnm(float(line[44]))
-                    KMag_code = cnc(int(line[45]))
-                    VariableFlag = line[51]
-                    MultipleFlag = line[52]
-                    cur.execute(sql,(
-                        HSTID, GSC1ID, GSCID, RA, Decl, RA_rad, Decl_rad, 
-                        RA_deg, Decl_deg, Original_Epoch, RA_eps, Decl_eps, 
-                        PmRA, PmDec, Delta_Epoch, FpgMag, JpgMag, VMag, 
-                        NpgMag, UMag, BMag, RMag, IMag, JMag, HMag, KMag, 
-                        Classification, SemiMajorAxis, Eccentricity, PositionAngle, SourceStatus))
-                    cur.execute(sql_ef,(
-                        HSTID, GSC1ID, GSCID, PmRA_mu, PmDec_mu,
-                        FpgMag_err, FpgMag_code, JpgMag_err, JpgMag_code,
-                        VMag_err, VMag_code, NpgMag_err, NpgMag_code,
-                        UMag_err, UMag_code, BMag_err, BMag_code,
-                        RMag_err, RMag_code, IMag_err, IMag_code,
-                        JMag_err, JMag_code, HMag_err, HMag_code,
-                        KMag_err, KMag_code, VariableFlag, MultipleFlag))
+                    ra_deg = float(line[0])
+                    dec_deg = float(line[1])
+                    twomass_id = line[2]
+                    ra_rad = degToRad(ra_deg)
+                    dec_rad = degToRad(dec_deg)
+                    RA = deg2SexagHrs(ra_deg)
+                    Decl = deg2Sexag(dec_deg)
+                    JMag = cnm(line[3])
+                    HMag = cnm(line[4])
+                    KMag = cnm(line[5])
+                    ph_qual = line[6]
+                    rd_flg = float(line[7])
+                    if dec_deg < -70.:
+                        cur.execute(sql_nv,(
+                            twomass_id, RA, Decl, ra_deg, dec_deg, ra_rad, dec_rad, JMag, HMag, KMag, ph_qual, rd_flg))
+                    else:
+                        cur.execute(sql,(
+                            twomass_id, RA, Decl, ra_deg, dec_deg, ra_rad, dec_rad, JMag, HMag, KMag, ph_qual, rd_flg))
                     count+=1
                 except Exception as e:
+                    #This exception will print all error messages that are not a duplicate primary key
                     #--------------------------#
-                    if e.args[0] != 1062:
+                    if int(e.args[0]) != 1062:
                         print(e)
+                        print(line)
+                    # elif verbose:
+                    #     if int(e.args[0]) == 1062:
+                    #         print(e)
                     #-------------------------#
-                    #this exception catches duplicate stars
+                    
                     countdup+=1
     except Exception as e:
         #this exception catches files that do not exist
@@ -314,7 +188,7 @@ def insertTable(databaseName = "GSC240_dev", tableNames = ['gsc240', 'gsc240_err
     conn.commit()
     conn.close()
     if(verbose):
-        # print(f"{count} stars inserted | {countdup} duplicates")
+        #print(f"{count} stars inserted | {countdup} duplicates")
         return count, countdup
                     
 def deg2Sexag(deg):
@@ -356,18 +230,18 @@ def deg2SexagHrs(deg):
     ms = int(rest)
     return "%02d:%02d:%02d.%03d" % (hrs, mins, secs, ms)   
     
-def radToDeg(radians):
+def degToRad(degrees):
     """
-    Converts radians to degrees.
+    Converts degrees to radians.
     Args:
-        radians (float): Radian value.
+        degrees (float): Degree value.
     Returns:
-        float: Degree value.
+        float: Radian value.
     """
-    return math.degrees(radians)
+    return math.radians(degrees)
         
 
-def dropTable(databaseName = "GSC240_dev", tableName = "gsc240"):
+def dropTable(databaseName = "2MASS_dev", tableName = "2mass"):
     """
     Deletes the specified table.
     Args:
@@ -383,7 +257,7 @@ def dropTable(databaseName = "GSC240_dev", tableName = "gsc240"):
     except Exception as e:
         print(e)
         
-def killConnections(databaseName = "GSC240_dev"):
+def killConnections(databaseName = "2MASS_dev"):
     """
     Closes open connections.
     Args:
@@ -416,14 +290,14 @@ def parseArguments(in_args):
     usage = "\n{} [-d databaseName] \n".format(in_args[0])
     epilog = ""
     parser = argparse.ArgumentParser(description = description, usage = usage, epilog = epilog)
-    parser.add_argument("-d", "--databaseName", dest = "dName", type = str, help = "Name of the database to insert the tables into (default = 'GSC240_dev')", default = "GSC240_dev")
+    parser.add_argument("-d", "--databaseName", dest = "dName", type = str, help = "Name of the database to insert the tables into (default = '2MASS_dev')", default = "2MASS_dev")
     parser.add_argument("-n", "--NumDec", dest = "fNum", type = int, help = "Number of Dec files to insert into the database (default = 180)", default = 180)
-    parser.add_argument("-f", "--filePath", dest = "fPath", type = str, help = "location of the gsc240 csv folder (default = None)", default = "")
+    parser.add_argument("-f", "--filePath", dest = "fPath", type = str, help = "location of the 2mass data folder (default = None)", default = "")
     parser.add_argument("-r", "--randomInsertion", dest ="rIns", type = bool, help = "Randomly select files to insert? (default = F)", default = False)
     parser.add_argument("-m", "--manuallyInsert", dest = "mIns", type = str, help = "Manually insert a file or set of files (Dec (1-180),Decl decimal(1-10), ra(1-360)) Ex: 179,1,1 or 179,1 or 179 are all valid inputs (default = None)", default = None)
     parser.add_argument("-k", "--dropTables", dest = "kill", type = bool, help = "Drop Current tables and restart DB ingestion? (default = False)", default = False)
     parser.add_argument("-mr", "--manualRange", dest = "mr", type = str, help = "Manually insert a set of files (1,180--insert dec files 0-179) (default = None)", default = "")
-    parser.add_argument("-v", "--verbose", dest = "verbose", type = bool, help = "Print number of duplicate/new stars to command line (default=False)", default = False)
+    parser.add_argument("-v", "--verbose", dest = "verbose", type = bool, help = "Print number of duplicate/new stars to command line (default = False)", default = False)
     args = None
     try:
         args = parser.parse_args(in_args[1:])
@@ -439,13 +313,13 @@ def ingestDB():
     Returns:
         None
     """
-    tNames = ['gsc240', 'gsc240_errors_flags', 'gsc240_not_visible', 'gsc240_errors_flags_not_visible']
     args = parseArguments(sys.argv) 
     numFiles = args.fNum
     killConnections()
     createDatabase(args.dName)
+    tNames = ['2mass', '2mass_not_visible']
     if args.kill:
-        for i in range(len(tNames)):
+        for i in range(len(args.tNames)):
             print("Dropping Tables")
             dropTable(databaseName = args.dName, tableName = tNames[i])
             createTable(databaseName = args.dName, tableName = tNames[i])
@@ -509,12 +383,16 @@ def ingestDB():
         print("'Number of files' Insertion")
         for decDeg in tqdm(range(0,args.fNum)):
             for decDec in tqdm(range(10)):
+                count,countdups = 0,0
                 for Ra in range(360):
                     dec = "{:>03}".format(decDeg)
                     decdec = "{:>04}".format(decDec)
                     ra = "{:>03}".format(Ra)
-                    insertTable(databaseName = args.dName, tableNames = tNames, path = args.fPath, dec1 = dec, dec2 = decdec, ra = ra, verbose = args.verbose)
-                files.append([dec,decdec]) 
+                    c,cd = insertTable(databaseName = args.dName, tableNames = tNames, path = args.fPath, dec1 = dec, dec2 = decdec, ra = ra, verbose = args.verbose)
+                    count+=c
+                    countdups+=cd
+                files.append([dec,decdec])
+                print(f"{decDeg}: {count} stars inserted | {countdups} duplicate stars")
     if(args.verbose):
         for file in files:
             print(file)
