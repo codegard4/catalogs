@@ -1,18 +1,21 @@
 import pymysql 
-from tqdm import tqdm
 import argparse
 import os
-import sys, math
-import datetime
+import sys
+import math
 import os.path
 import numpy as np
-import pandas as pd
 import struct
 import random
 import configparser
+from tqdm import tqdm
 
 def connectionParameters():
-    #Returns the host, port, user and pw of the mySQL database to connect to
+    """
+    Returns the host, port, user, and password of the MySQL database to connect to.
+    Returns:
+        Tuple: (str, int, str, str) - host, port, user, password
+    """
     config = configparser.ConfigParser()
     config.read('catalogs.conf')
     db_host = config['UCAC4']['host']
@@ -22,37 +25,40 @@ def connectionParameters():
     return db_host, db_port, db_user, db_password
 
 def connectToDatabase(db_name = None):
-    #returns a connection to the database
+    """
+    Returns a connection to the database.
+    Args:
+        db_name (str): Name of the database.
+    Returns:
+        pymysql.connections.Connection: Database connection.
+    """
     db_host,db_port,db_user,db_password = connectionParameters()
-    if (db_name == None):
+    if db_name == None:
         conn = pymysql.connect(host=db_host, port=db_port, user=db_user, password=db_password)
     else:
         conn = pymysql.connect(host=db_host, port=db_port, user=db_user, password=db_password, database = db_name)
     return conn
-
-# def getOffsets(zoneNr):
-#     #Retrieves file offsets from the UCAC offsets file
-#     fileName = "%s/u4i/z%03d.idx" % ("../ucac4/", zoneNr)
-#     with open(fileName, "rb") as fh:
-#         out = [0] * 360
-#         for line in fh:
-#             if not line:
-#                 break
-#             parts = line.strip().split()
-#             i = int(parts[0])
-#             if i >= 360:
-#                 continue
-#             out[i] = int(parts[1])
-#         return out
         
 def checkMag(mag):
-    #Changes blank magnitude values to NULL
+     """
+    Changes blank magnitude values to NULL.
+    Args:
+        mag (float): Magnitude value.
+    Returns:
+        float or None: Magnitude value or None.
+    """
     if mag >= 20000:
         return None
     return mag / 1000
     
 def createDatabase(databaseName = "UCAC4_dev"): 
-    #Creates the UCAC4 database if it doesnt already exist
+    """
+    Creates the specified database if it doesn't already exist.
+    Args:
+        databaseName (str): Name of the database.
+    Returns:
+        None
+    """
     try:
         conn = connectToDatabase(db_name = databaseName)
         cur = conn.cursor()
@@ -63,11 +69,18 @@ def createDatabase(databaseName = "UCAC4_dev"):
         print("DB already created")
     
 def createTable(databaseName = "UCAC4_dev", tableName = "ucac4"): 
-    #Creates the specified table
+    """
+    Creates the specified table.
+    Args:
+        databaseName (str): Name of the database.
+        tableName (str): Name of the table.
+    Returns:
+        None
+    """
     conn = connectToDatabase(db_name = databaseName)
     cur = conn.cursor()
     cur.execute(f'CREATE TABLE {tableName} (UCAC_ID INT PRIMARY KEY);')
-    if(tableName == 'ucac4' or tableName == 'ucac4_not_visible'):
+    if tableName == 'ucac4' or tableName == 'ucac4_not_visible':
         query = f"""ALTER TABLE {tableName} ADD 2MASS_ID INT, ADD RA VARCHAR(14), ADD Decl VARCHAR(14), \
                 ADD RA_deg FLOAT, ADD Decl_deg FLOAT, \
                 ADD RA_orig INT, ADD Decl_orig INT, \
@@ -82,7 +95,7 @@ def createTable(databaseName = "UCAC4_dev", tableName = "ucac4"):
                 ADD APASS_B FLOAT, ADD APASS_V FLOAT, ADD APASS_g FLOAT, \
                 ADD APASS_r FLOAT, ADD APASS_i FLOAT; \
                 """
-    elif(tableName == 'ucac4_errors_flags' or tableName == 'ucac4_errors_flags_not_visible'):
+    elif tableName == 'ucac4_errors_flags' or tableName == 'ucac4_errors_flags_not_visible':
         query = f"""ALTER TABLE {tableName} ADD SigMag FLOAT, \
                 ADD Na1 INT, ADD Nu1 INT, ADD Cu1 INT, \
                 ADD icqflg_J INT, ADD icqflg_H INT, ADD icqflg_K INT, \
@@ -99,7 +112,14 @@ def createTable(databaseName = "UCAC4_dev", tableName = "ucac4"):
     conn.close()
 
 def viewTable(databaseName = "UCAC4_dev", tableName = "ucac4"):
-    #queries the database for the table specified
+    """
+    Queries the database for the specified table.
+    Args:
+        databaseName (str): Name of the database.
+        tableName (str): Name of the table.
+    Returns:
+        List: Result of the query.
+    """
     try:
         conn = connectToDatabase(db_name = databaseName)
         cur = conn.cursor()
@@ -113,13 +133,21 @@ def viewTable(databaseName = "UCAC4_dev", tableName = "ucac4"):
 
     
 def insertTable(databaseName = "UCAC4_dev", fileNum = 1, tableNames = ['ucac4', 'ucac4_errors_flags', 'ucac4_not_visible', 'ucac4_errors_flags_not_visible'], path = "u4b"):  
-    #Inserts data from the z*filenum* file 
-    #ex: fileNum:1 would insert data from z001 file
+    """
+    Inserts data from the z*filenum* file into the specified tables.
+    Args:
+        databaseName (str): Name of the database.
+        fileNum (int): Number of the file to insert data from.
+        tableNames (List): Names of the tables to insert data into.
+        path (str): Path to the folder containing the files.
+    Returns:
+        None
+    """
     try:
         conn = connectToDatabase(db_name = databaseName)
         cur = conn.cursor()
         fileName = "{:>03}".format(fileNum)
-        if(fileNum < 100):
+        if fileNum < 100:
             loc = 2
         else:
             loc = 0
@@ -130,23 +158,21 @@ def insertTable(databaseName = "UCAC4_dev", fileNum = 1, tableNames = ['ucac4', 
                 VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s); 
             """
         sql_ef = f"""INSERT INTO {tableNames[loc+1]} (UCAC_ID, SigMag, \
-                    Na1, Nu1, Cu1, icqflg_J, icqflg_H, icqflg_K, e2mpho_J, e2mpho_H, e2mpho_K, \
-                    APASS_B_err, APASS_V_err, APASS_g_err, APASS_r_err, APASS_i_err, gcflg, \
-                    icf, leda, x2m, zn2, rn2) \
-                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);  
-                """
+                Na1, Nu1, Cu1, icqflg_J, icqflg_H, icqflg_K, e2mpho_J, e2mpho_H, e2mpho_K, \
+                APASS_B_err, APASS_V_err, APASS_g_err, APASS_r_err, APASS_i_err, gcflg, \
+                icf, leda, x2m, zn2, rn2) \
+                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);  
+            """
         with open(f'{path}/z{fileName}', 'rb') as f:
-            # offsets = getOffsets(fileNum)  
-            # f.seek(offsets[int(fileNum*0.2)] * 78, 0)
             ok = True
             incr = ""
             while ok:
                 record = f.read(78)
                 if not record:
                     break
-                raw = struct.unpack("<iiHHBBB" + "bbBBBHH" + "hhbb" + "IHHHBBBBBBHHHHHbbbbbb" + "IbbIHI", record)
+                raw = struct.unpack("<iiHHBBB" + "bbBBBHH" + "hhbb" + "IHHHBBBBBBHHHHHbbbbbb" + "IbbIHI", record) #unpacks the binary record to the correct format
                 tMASS_pts_key = raw[18]
-                if(tMASS_pts_key == 0):
+                if tMASS_pts_key == 0:
                     tMASS_pts_key = None
                 RA_orig = raw[0]
                 Decl_orig = raw[1]
@@ -191,15 +217,15 @@ def insertTable(databaseName = "UCAC4_dev", fileNum = 1, tableNames = ['ucac4', 
                 APASS_g_err = raw[35]
                 APASS_r_err = raw[36]
                 APASS_i_err = raw[37]
-                if(APASS_B_err == 99):
+                if APASS_B_err == 99:
                     APASS_B_err = None
-                if(APASS_V_err == 99):
+                if APASS_V_err == 99:
                     APASS_V_err = None
-                if(APASS_g_err == 99):
+                if APASS_g_err == 99:
                     APASS_g_err = None
-                if(APASS_r_err == 99):
+                if APASS_r_err == 99:
                     APASS_r_err = None
-                if(APASS_i_err == 99):
+                if APASS_i_err == 99:
                     APASS_i_err = None
                 gcflg = raw[38]
                 icf = raw[39]
@@ -222,7 +248,13 @@ def insertTable(databaseName = "UCAC4_dev", fileNum = 1, tableNames = ['ucac4', 
     conn.close()
                     
 def deg2Sexag(deg):
-    #converts degrees to sexagesimal format (degs:mins:secs)
+    """
+    Converts degrees to sexagesimal format (degs:mins:secs).
+    Args:
+        deg (float): Degree value.
+    Returns:
+        str: Sexagesimal representation of the degree.
+    """
     sign = " "
     if deg < 0:
         sign = "-"
@@ -237,7 +269,13 @@ def deg2Sexag(deg):
     return "%c%02d:%02d:%02d.%03d" % (sign, dd, mm, ss, ms)   
     
 def deg2SexagHrs(deg):
-    #converts degrees to sexagesimal format for RA (hrs:mins:secs)
+    """
+    Converts degrees to sexagesimal format for RA (hrs:mins:secs).
+    Args:
+        deg (float): Degree value.
+    Returns:
+        str: Sexagesimal representation of the degree for RA.
+    """
     deg = (deg / 360) * 24
     hrs = int(deg)
     rest = (deg - hrs) * 60
@@ -249,12 +287,25 @@ def deg2SexagHrs(deg):
     return "%02d:%02d:%02d.%03d" % (hrs, mins, secs, ms)   
     
 def radToDeg(radians):
-    #converst radians to degrees
+    """
+    Converts radians to degrees.
+    Args:
+        radians (float): Radian value.
+    Returns:
+        float: Degree value.
+    """
     return math.degrees(radians)
         
 
 def dropTable(databaseName = "UCAC4", tableName = "ucac4"):
-    #deletes the table specified
+    """
+    Deletes the specified table.
+    Args:
+        databaseName (str): Name of the database.
+        tableName (str): Name of the table.
+    Returns:
+        None
+    """
     try: 
         conn = connectToDatabase(db_name = databaseName)
         cur = conn.cursor()
@@ -265,17 +316,20 @@ def dropTable(databaseName = "UCAC4", tableName = "ucac4"):
         print(e)
         
 def killConnections(databaseName = "UCAC4_dev"):
-    #closes open connections
-    #used to make sure that any open connections are closed so that the following SQL commands will run
-    #(when a function breaks before running the connection will not close)
+    """
+    Closes open connections.
+    Args:
+        databaseName (str): Name of the database.
+    Returns:
+        None
+    """
     try:
-        host,_,user,_ = connectionParameters()
+        _,_,user,_ = connectionParameters()
         conn = connectToDatabase(db_name = databaseName)
         cur = conn.cursor()
         cur.execute(f"SELECT CONCAT('KILL ', id, ';') FROM INFORMATION_SCHEMA.PROCESSLIST WHERE user = '{user}';")
         kills = cur.fetchall()
         for kill in kills:
-            # print(kill[0])
             cur.execute(str(kill[0]))
         conn.commit()
         conn.close()
@@ -283,17 +337,23 @@ def killConnections(databaseName = "UCAC4_dev"):
         pass
 
 def parseArguments(in_args):
+    """
+    Parses command-line arguments.
+    Args:
+        in_args (List): List of command-line arguments.
+    Returns:
+        argparse.Namespace: Parsed arguments.
+    """
     description = "Reads star files into mySQL DB"
     usage = "\n{} [-d databaseName] \n".format(in_args[0])
     epilog = ""
     parser = argparse.ArgumentParser(description=description, usage=usage, epilog=epilog)
     parser.add_argument("-d", "--databaseName", dest="dName", type=str, help="Name of the database to insert the tables into (default = 'UCAC4_dev')", default="UCAC4_dev")
     parser.add_argument("-n", "--NumFiles", dest="fNum", type=int, help="Number of files to insert into the database (default = 900)", default=900)
-    parser.add_argument("-f", "--filePath", dest="fPath", type=str, help="location of the u4b folder", default="../ucac4/u4b")
-    parser.add_argument("-t", "--tableNames", dest="tNames", type=list, help="names of the tables (default = [ucac4,ucac4_errors_flags,ucac4_errors_flags_not_visible,ucac4_not_visible])", default=['ucac4', 'ucac4_errors_flags', 'ucac4_not_visible', 'ucac4_errors_flags_not_visible'])
-    parser.add_argument("-r", "--randomInsertion", dest="rIns", type=bool, help="Randomly select files to insert? (default = F)", default=False)
+    parser.add_argument("-f", "--filePath", dest="fPath", type=str, help="location of the u4b folder (default = None)", default="")
+    parser.add_argument("-r", "--randomInsertion", dest="rIns", type=bool, help="Randomly select files to insert? (default = False)", default=False)
     parser.add_argument("-m", "--manuallyInsert", dest="mIns", type=str, help="Manually insert zone files in a specified range (default = 0,0)", default=None)
-    parser.add_argument("-k", "--dropTables", dest="kill", type=bool, help="Drop Current tables and restart DB ingestion? (Default = False)", default=False)
+    parser.add_argument("-k", "--dropTables", dest="kill", type=bool, help="Drop Current tables and restart DB ingestion? (default = False)", default=False)
     args = None
     try:
         args = parser.parse_args(in_args[1:])
@@ -304,33 +364,33 @@ def parseArguments(in_args):
     return args 
 
 def ingestDB():
+    """
+    Main function for ingesting data into the database based on command-line arguments.
+    Returns:
+        None
+    """
+    tNames = ['ucac4', 'ucac4_errors_flags', 'ucac4_not_visible', 'ucac4_errors_flags_not_visible']
     args = parseArguments(sys.argv) 
     numFiles = args.fNum
     killConnections(args.dName)
     createDatabase(args.dName)
-    if(args.kill):
-        for i in range(len(args.tNames)):
+    if args.kill: #Clear the tables and restart
+        for i in range(len(tNames)):
             print("Dropping Tables")
-            dropTable(databaseName = args.dName, tableName = args.tNames[i])
-            createTable(databaseName = args.dName, tableName = args.tNames[i])
-            # print(args.tNames[i])
-    if(args.mIns != None):
-        # print(args.mIns)
+            dropTable(databaseName = args.dName, tableName = tNames[i])
+            createTable(databaseName = args.dName, tableName = tNames[i])
+    if args.mIns != None: #manually insert files
         files = args.mIns.split(",")
-        # print(files)
         nums = np.arange(int(files[0]),int(files[1])+1,1)
         numFiles = len(nums)
         print(f"Manually Inserting files {files[0]} through {files[1]}")
-    elif(args.rIns):
+    elif(args.rIns): #randomly insert files (for database testing on dev)
         nums = random.sample(range(1, 901), args.fNum)
-    else:
-        nums = np.arange(1,901,int(900/args.fNum))
-        
+    else: #insert a specified number of files
+        nums = np.arange(1,901,int(900/args.fNum))    
     for i in tqdm(range(1,numFiles+1)):
-        insertTable(databaseName = args.dName, fileNum = nums[i-1], tableNames = args.tNames, path = args.fPath)
+        insertTable(databaseName = args.dName, fileNum = nums[i-1], tableNames = tNames, path = args.fPath)
     print(f"Zone Files Inserted: {nums}")
 
-    
-    
 if __name__ == "__main__":
     ingestDB()
