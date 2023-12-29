@@ -70,10 +70,10 @@ def createTable(databaseName = "2MASS_dev", tableName = "2mass"):
         query = f"""ALTER TABLE {tableName} \
             ADD RA VARCHAR(13), \
             ADD Decl VARCHAR(13), \
-            ADD RA_rad DOUBLE(5,7), \
-            ADD Decl_rad DOUBLE(5,7), \
             ADD RA_deg DOUBLE(5,7), \
             ADD Decl_deg DOUBLE(5,7), \
+            ADD RA_rad DOUBLE(5,7), \
+            ADD Decl_rad DOUBLE(5,7), \
             ADD JMag REAL, \
             ADD HMag REAL, \
             ADD KMag REAL, \
@@ -134,11 +134,11 @@ def insertTable(databaseName = "2MASS_dev", tableNames = ['2mass', '2mass_not_vi
     cur = conn.cursor() 
     try:
         sql = f"""INSERT INTO 2mass ( \
-        2mass_ID, RA, Decl, RA_rad, Decl_rad, RA_deg, Decl_deg, JMag, HMag, KMag, ph_qual, rd_flg)\
+        2mass_ID, RA, Decl, RA_deg, Decl_deg, RA_rad, Decl_rad, JMag, HMag, KMag, ph_qual, rd_flg)\
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s); \
             """
         sql_nv= f"""INSERT INTO 2mass_not_visible ( \
-                2mass_ID, RA, Decl, RA_rad, Decl_rad, RA_deg, Decl_deg, JMag, HMag, KMag, ph_qual, rd_flg)\
+                2mass_ID, RA, Decl, RA_deg, Decl_deg, RA_rad, Decl_rad, JMag, HMag, KMag, ph_qual, rd_flg)\
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s); \
             """
         file = f"{dec1}/{dec2}/{ra}.dat"
