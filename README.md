@@ -106,7 +106,7 @@ The current Python library requirements for this project are:
 
 # GAIA
 
-### How to run the gaia.py or gaia_unzipped.py files
+### How to run the gaia_single.py or gaia_batch.py files
 
 
 1. Edit the catalogs.conf file under [GAIA] to include the server host, port, user and password you wish to have the database created on.
@@ -124,19 +124,21 @@ The current Python library requirements for this project are:
 
 ### Additional GAIA Commands
 
-| Command                   | Description                                                                          | Default                        |
 | :-----------------------: | :----------------------------------------------------------------------------------  | :----------------------        |
 | python gaia.py -n         | Number of files to randomly insert into the database                                 | 307                            |
 | python gaia.py -r         | Randomly select folders to insert?                                                   | False                          |
 | python gaia.py -mr        | Start insertion from a folder and end at a folder (default: aa,lu)                   | "aa,lu"                        |
 | python gaia.py -k         | Drop current tables and restart DB ingestion?                                        | False                          |
 | python gaia.py -v         | Print errors & star numbers                                                          | False                          |
+| python gaia.py -ef        | Create errors flags table?                                                            | False                          |
+| python gaia.py -z         | Are the GAIA files unzipped?                                                          | True                           |
 
 
-* to run gaia ingestion use python gaia.py -d GAIA -f *your local path to the gaia folders* -k True -v True
+* to run gaia ingestion use python gaia_batch.py -d GAIA -f *your local path to the gaia folders* -v True -mr aa,lu
 	* -k True will clear the database, do NOT use this after the first run of gaia; only use it for clearing test databases in dev or when you first run the gaia ingestion in a database
 	* -v True will print any errors that the file throws when running db ingestion. It will not print duplicate star errors, which are the most common. The SQL DB will throw this error if you try to insert a file that has already been inserted
 
+*Note--gaia_batch is a file that runs batch insertions after each of the 307 directories and is much faster than gaia_single. However gaia_single works well for individual directories to ensure that every line is either being inserted or duplicate stars are being accounted for
 
 
 # 2MASS
